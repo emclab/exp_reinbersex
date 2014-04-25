@@ -1,0 +1,27 @@
+<% if @view_in_config && @erb_code %>
+  <%= render inline: ERB.new(@erb_code).result(binding) %>
+  
+<% else %>
+<%= simple_form_for @reinberse do |f| %> 
+      <%= f.input :request_date, :label => t('Request Date'), :as => :string, :readonly => readonly?(@reinberse, 'request_date') %>
+      <%= f.input :requested_by_name, :label => t('Quoted_by'), :readonly => true, :required => false, :input_html => {:value => @reinberse.requested_by.name} %>	  
+      <%= f.input :amount, :label => t('Amount($)')  %>
+      <%= f.input :brief_note, :label => t('Brief Note'), :input_html => {:rows => 3} %>
+	  <%= f.input :exp_category_id, :label => t('Reinbersement Category'), :collection => Commonx::CommonxHelper.return_misc_definitions('exp_category'), :include_blank => true unless readonly?(@reinberse, 'exp_category_id')%>
+	  <%= f.input :exp_category_name, :label => t('Reinbersement Category'), :input_html => {:value => @reinberse.exp_category.name} if readonly?(@reinberse, 'exp_category_id')%>
+	  <% if readonly?(@reinberse, 'void')%>
+        <%= f.input :void_noupdate, :label => t('Void'), :readonly => true, :required => false, :input_html => {:value => @quote.void} %>
+      <% else %>
+        <%= f.input :void, :label => t('Void'), :collection => [[t('Yes'), true], [t('No'), false]]%>
+      <% end %>
+      <%= f.input :approved_noupdate, :label => t('Approved'), :readonly => true, :required => false, :input_html => {:value => (@reinberse.approved ? t('Yes') : t('No')) } %>
+      <%= f.input :paid_noupdate, :label => t('Paid'), :readonly => true, :required => false, :input_html => {:value => (@reinberse.paid ? t('Yes') : t('No')) } %>
+      <%= f.input :requester_zone_name, :label => t('Requester Zone'), :readonly => true, :required => false, :input_html => {:value => @reinberse.requester_zone.zone_name} %>
+	  <%= f.input :last_updated_by_name, :label => t('Last Updated By'), :readonly => true, :input_html => {:value => @reinberse.last_updated_by.name} %>
+	  
+	  <%= link_to t('Back'), SUBURI + "/authentify/view_handler?index=0", :class => BUTTONS_CLS['action'] %>
+	  <%= f.button :submit, t('Save'), :class => BUTTONS_CLS['action'] %>  
+<% end %> 
+
+<% end %> 
+

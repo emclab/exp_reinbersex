@@ -1,0 +1,74 @@
+<% if @view_in_config && @erb_code %>
+  <%= render inline: ERB.new(@erb_code).result(binding) %>
+  
+<% else %>
+<div id="main_body">
+<h4><%=t('Reinbersement Info') %></h4>
+
+<p>
+  <b><%= t('Requested By') %>:</b>
+  <%= @reinberse.requested_by.name %>
+</p>
+<p>
+  <b><%= t('Requester Zone') %>:</b>
+  <%= @reinberse.requester_zone.zone_name %>
+</p>
+<p>
+  <b><%= t('Request Date') %>:</b>
+  <%= @reinberse.request_date.strftime("%Y/%m/%d") %>
+</p>
+<p>
+  <b><%= t('Amount($)') %>:</b>
+  <%= number_with_precision(@reinberse.amount, :precision => 2) %>
+</p>
+<p>
+  <b><%= t('Brief Note') %>:</b>
+  <%= @reinberse.brief_note %>
+</p>
+<p>
+  <b><%= t('Void') %>:</b>
+  <%= @reinberse.void ? t('Yes') : t('No') %>
+</p>
+<p>
+  <b><%= t('Approved') %>:</b>
+  <%= @reinberse.approved ? t('Yes') : t('No') %>
+</p>
+<p>
+  <b><%= t('Approved Date') %>:</b>
+  <%= @reinberse.approved_date.strftime("%Y/%m/%d") if @reinberse.approved_date.present? %>
+</p>
+<p>
+  <b><%= t('Paid') %>:</b>
+  <%= @reinberse.paid ? t('Yes') : t('No') %>
+</p>
+<p>
+  <b><%= t('Paid Date') %>:</b>
+  <%= @reinberse.paid_date.strftime("%Y/%m/%d") if @reinberse.paid_date.present? %>
+</p>
+<p>
+  <b><%= t('WF State') %>:</b>
+  <%= t(@reinberse.wf_state) if @reinberse.wf_state.present? %>
+</p>
+<p>
+  <b><%= t('Last Updated By') %>:</b>
+  <%= @reinberse.last_updated_by.name %>
+</p>
+<p>
+<% if @reinberse.wf_state.present? %>
+  <b><%=t('Workflow History')%>:</b>
+  <% StateMachineLogx::Log.where('resource_id = ? AND resource_string = ?', @reinberse.id, params[:controller]).order('created_at DESC').each do |t| %>
+    <li><%= t.created_at.strftime("%Y/%m/%d") %>,&nbsp; <%= t.action_by_name %>,&nbsp; <%=t(t.from)%>,&nbsp; <%=t(t.event.capitalize) %>,&nbsp; <%=t(t.to)%>,&nbsp;<%= t.comment %> </li>
+  <% end %>
+<% end %>	
+</p>
+
+	<table class="table table-striped">
+	  <tr>
+	    <th>
+  			<%= link_to t('Back'), SUBURI + "/authentify/view_handler?index=0", :id => 'close', :class => BUTTONS_CLS['action'] %> 			
+        </th>
+	  </tr>
+	</table>    	
+</div>
+
+<% end %>

@@ -1,0 +1,16 @@
+<% if @view_in_config && @erb_code %>
+  <%= render inline: ERB.new(@erb_code).result(binding) %>
+  
+<% else %>
+<%= simple_form_for @reinberse do |f| %> 
+      <%= f.input :request_date, :label => t('Request Date'), :as => :string  %>
+      <%= f.input :amount, :label => t('Amount($)')  %>
+      <%= f.input :brief_note, :label => t('Brief Note'), :input_html => {:rows => 3} %>
+	  <%= f.input :exp_category_id, :label => t('Reinbersement Category'), :collection => Commonx::CommonxHelper.return_misc_definitions('exp_category'), :include_blank => true %>
+	  
+	  <%= link_to t('Back'), SUBURI + "/authentify/view_handler?index=0", :class => BUTTONS_CLS['action'] %>
+	  <%= f.button :submit, t('Save'), :class => BUTTONS_CLS['action'] %>  
+<% end %> 
+
+<% end%> 
+

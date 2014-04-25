@@ -1,0 +1,68 @@
+<% if @view_in_config && @erb_code %>
+  <%= render inline: ERB.new(@erb_code).result(binding) %>
+  
+  <% else %>
+<div class="pagination"><%= will_paginate models %></div>
+    <table class="table table-striped">
+		<tr>
+			<th>#</th>
+			<th><%= t('Requested By') %></th>
+			<th><%= t('Request Date') %></th>
+			<th><%= t('Amount($)') %></th>		
+			<th><%= t('Brief Note') %></th>
+			<th><%= t('Requester Zone') %></th>
+			<th><%= t('Approve Date') %></th>
+			<th><%= t('Paid') %></th>
+			<th><%= t('Paid Date') %></th>
+			<th><%= t('Paid By') %></th>
+			<th><%= t('WF State') %></th>
+			<th><%= t('Last Updated By') %></th>
+			<th></th>
+			<th></th>
+			<th></th>
+		</tr>
+		<% models.each do |r| %>
+		  <tr>
+		  	<% if has_action_right?('show', params[:controller], r) %>
+		  	  <td><%=link_to r.id.to_s, SUBURI + "/authentify/view_handler?index=1&url=#{reinberse_path(r)}" %></td>
+		  	<% else %>
+		  	  <td><%= r.id %></td>
+		  	<% end %>
+		  	<td><%= prt(r, 'requested_by.name') %></td>
+		  	<td><%= prt(r, :request_date).strftime("%Y/%m/%d") %></td>		  	
+			<td><%= number_with_precision(prt(r, :amount), :precision => 2) if prt(r, :amount).present? %></td>
+			<td><%= prt(r, :brief_note) %></td>
+			<td><%= prt(r, 'requester_zone.zone_name') %></td>
+			<td><%= prt(r, :approved_date).strftime("%Y/%m/%d") if prt(r, :approved_date).present? %></td>
+			<td><%= r.paid ? t('Yes') : t('No') %></td>
+			<td><%= prt(r, :paid_date).strftime("%Y/%m/%d") if prt(r, :paid_date).present? %></td>
+			<td><%= prt(r, 'paid_by.name') if r.paid_by_id.present? %></td>
+			<td><%= t(prt(r, :wf_state).humanize) if r.wf_state.present? %></td>
+			<td><%= prt(r, 'last_updated_by.name') %></td>    
+			<td><%= link_to t('Submit Reinbersement'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'submit', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'initial_state' && has_action_right?('submit', params[:controller], r) %></td>
+			<td><%= link_to t('Store Manager ') + t('Approve'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'store_manager_approve', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'store_manager_reviewing' && has_action_right?('store_manager_approve', params[:controller], r) %></td>
+			<td><%= link_to t('Store Manager ') + t('Reject'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'store_manager_reject', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'store_manager_reviewing' && has_action_right?('store_manager_reject', params[:controller], r) %></td>
+			<td><%= link_to t('Acct ') +  t('Approve'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'acct_approve', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'acct_reviewing' && has_action_right?('acct_approve', params[:controller], r) %></td>
+			<td><%= link_to t('Acct ') + t('Reject'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'acct_reject', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'acct_reviewing' && has_action_right?('acct_reject', params[:controller], r) %></td>
+		    <td><%= link_to t('CEO ') + t('Approve'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'ceo_approve', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'ceo_reviewing' && has_action_right?('ceo_approve', params[:controller], r) %></td>
+			<td><%= link_to t('CEO ') + t('Reject'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'ceo_reject', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'ceo_reviewing' && has_action_right?('ceo_reject', params[:controller], r) %></td>
+		    <td><%= link_to t('CEO ') + t('Rewind'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'ceo_rewind', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'ceo_reviewing' && has_action_right?('ceo_rewind', params[:controller], r) %></td>
+		    <td><%= link_to t('Pay'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'pay', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'approved' && has_action_right?('pay', params[:controller], r) %></td>
+		    <td><%= link_to t('Edit'), SUBURI + "/authentify/view_handler?index=1&url=#{edit_reinberse_path(r)}", :class => BUTTONS_CLS['action']  if (r.wf_state.nil? or r.wf_state == 'initial_state') && has_action_right?('update', params[:controller], r) %></td>
+
+		  </tr>
+		<% end %>
+	</table>
+	
+	<table class="table table-striped">
+	  <tr>
+	    <th>
+	    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	    	<%= link_to t('Back'), SUBURI + "/authentify/view_handler?index=0", :class => BUTTONS_CLS['action']  %>
+	    	<%= link_to t('New Reinberse'), SUBURI + "/authentify/view_handler?index=1&url=#{new_reinberse_path()}", :class => BUTTONS_CLS['action']  if  has_action_right?('create', params[:controller]) %>
+	    	<%= link_to t('Open Process'), SUBURI + "/authentify/view_handler?index=1&url=#{list_open_process_reinberses_path()}", :class => BUTTONS_CLS['action']  if  has_action_right?('list_open_process', params[:controller]) %>
+	    </th>
+	  </tr>
+	</table>
+
+<% end %>	
