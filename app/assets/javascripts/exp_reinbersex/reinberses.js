@@ -8,8 +8,8 @@ $(function() {
 
 //for search.html.erb
 $(function() {
-   $("#customer_start_date_s").datepicker({dateFormat: 'yy-mm-dd'});
-   $("#customer_end_date_s").datepicker({dateFormat: 'yy-mm-dd'});
+   $("#reinberse_start_date_s").datepicker({dateFormat: 'yy-mm-dd'});
+   $("#reinberse_end_date_s").datepicker({dateFormat: 'yy-mm-dd'});
    $("#reinberse_request_date_s").datepicker({dateFormat: 'yy-mm-dd'});
    $("#reinberse_paid_date_s").datepicker({dateFormat: 'yy-mm-dd'});
    $("#reinberse_approved_date_s").datepicker({dateFormat: 'yy-mm-dd'});
