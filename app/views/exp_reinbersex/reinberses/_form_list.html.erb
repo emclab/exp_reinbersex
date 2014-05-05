@@ -37,7 +37,7 @@
 			<td><%= r.paid ? t('Yes') : t('No') %></td>
 			<td><%= prt(r, :paid_date).strftime("%Y/%m/%d") if prt(r, :paid_date).present? %></td>
 			<td><%= prt(r, 'paid_by.name') if r.paid_by_id.present? %></td>
-			<td><%= t(prt(r, :wf_state).humanize) if r.wf_state.present? %></td>
+			<td><%= t(prt(r, :wf_state).humanize.titleize) if r.wf_state.present? %></td>
 			<td><%= prt(r, 'last_updated_by.name') %></td>    
 			<td><%= link_to t('Submit Reinbersement'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'submit', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'initial_state' && has_action_right?('submit', params[:controller], r) %></td>
 			<td><%= link_to t('Store Manager ') + t('Approve'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_reinberse_path(r, :wf_event => 'store_manager_approve', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'store_manager_reviewing' && has_action_right?('store_manager_approve', params[:controller], r) %></td>

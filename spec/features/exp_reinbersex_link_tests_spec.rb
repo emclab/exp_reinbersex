@@ -102,9 +102,11 @@ describe "LinkTests" do
       click_button 'Login'
     end
     it "works! (now write some real specs)" do
+      visit reinberses_path
+      save_and_open_page
       task = FactoryGirl.create(:exp_reinbersex_reinberse,:paid_by_id => nil, :requested_by_id => @u.id)
       visit reinberses_path
-      #save_and_open_page
+      save_and_open_page
       page.should have_content('Reinbersements')
       page.should have_content('Initial State')  #for workflow
       page.should have_content('Submit Reinbersement')

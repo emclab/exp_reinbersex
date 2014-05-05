@@ -47,7 +47,7 @@
 </p>
 <p>
   <b><%= t('WF State') %>:</b>
-  <%= t(@reinberse.wf_state) if @reinberse.wf_state.present? %>
+  <%= t(@reinberse.wf_state.humanize.titleize) if @reinberse.wf_state.present? %>
 </p>
 <p>
   <b><%= t('Last Updated By') %>:</b>
