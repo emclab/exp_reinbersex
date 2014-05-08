@@ -35,14 +35,14 @@ module ExpReinbersex
     end
     
     attr_accessor :exp_category_name, :last_updated_by_name, :approved_noupdate, :paid_noupdate, :requested_by_name, :requester_zone_name, :requester_role_name,
-                  :void_noupdate, :wf_comment, :id_noupdate
+                  :void_noupdate, :wf_comment, :id_noupdate, :wf_state_noupdate, :wf_event
     attr_accessible :amount, :approved, :approved_date, :brief_note, :exp_category_id, :last_updated_by_id, :paid, :paid_by_id, :paid_date, :request_date, 
                     :requested_by_id, :requester_role_id, :requester_zone_id, :void, :wf_state,
                     :as => :role_new
     attr_accessible :amount, :approved, :approved_date, :brief_note, :exp_category_id, :paid, :paid_by_id, :paid_date, :request_date, 
                     :requester_role_id, :requester_zone_id, :void, :wf_state,
                     :wf_comment, :id_noupdate, :exp_category_name, :last_updated_by_name, :approved_noupdate, :paid_noupdate, :requested_by_name, :requester_zone_name, :requester_role_name,
-                    :void_noupdate,
+                    :void_noupdate, :wf_state_noupdate,
                     :as => :role_update
     
     attr_accessor :start_date_s, :end_date_s, :exp_category_id_s, :paid_date_s, :time_frame_s, :requested_by_id_s, :requester_zone_id_s, 
@@ -73,7 +73,7 @@ module ExpReinbersex
     validate :validate_wf_input_data, :if => 'wf_state.present?' 
     
     def validate_wf_input_data
-      wf = Authentify::AuthentifyUtility.find_config_const('validate_reinberse_' + self.wf_state, 'exp_reinbersex')
+      wf = Authentify::AuthentifyUtility.find_config_const('validate_reinberse_' + self.wf_event, 'exp_reinbersex') if self.wf_event.present?
       if Authentify::AuthentifyUtility.find_config_const('wf_validate_in_config') == 'true' && wf.present? 
         eval(wf) 
       end

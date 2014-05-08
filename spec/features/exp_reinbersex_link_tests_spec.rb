@@ -57,7 +57,8 @@ describe "LinkTests" do
                                              <%= f.input :paid_by_id, :as => :hidden, :input_html => {:value => session[:user_id]}%>
                                              <%= f.input :paid, :as => :hidden, :input_html => {:value => true} %>")
       FactoryGirl.create(:engine_config, :engine_name => 'exp_reinbersex', :engine_version => nil, :argument_name => 'validate_reinberse_pay', 
-                         :argument_value => "validates :paid_date, :paid, :presence => true ")   
+                         :argument_value => " errors.add(:paid_date, I18n.t('Not be blank')) if paid_date.blank?
+                                               ")   
                          
       FactoryGirl.create(:engine_config, :engine_name => '', :engine_version => nil, :argument_name => 'wf_pdef_in_config', :argument_value => 'true')
       FactoryGirl.create(:engine_config, :engine_name => '', :engine_version => nil, :argument_name => 'wf_route_in_config', :argument_value => nil)
@@ -198,5 +199,21 @@ describe "LinkTests" do
       page.should have_content((Date.today - 2.days).to_s.gsub('-', '/'))
     end
     
+    it "should validate for workflow" do
+      task = FactoryGirl.create(:exp_reinbersex_reinberse,:paid_by_id => nil, :wf_state => 'approved')
+      visit reinberses_path
+      click_link 'Pay'
+      #save_and_open_page
+      fill_in 'reinberse_wf_comment', :with => 'this line tests workflow'
+      fill_in 'reinberse_paid_date', :with => nil #Date.today - 2.days
+      #save_and_open_page
+      click_button 'Save'
+      #
+      
+      visit reinberses_path
+      click_link task.id.to_s
+      #save_and_open_page
+      page.should_not have_content('this line tests workflow')
+    end
   end
 end
