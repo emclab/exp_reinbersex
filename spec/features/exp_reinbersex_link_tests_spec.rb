@@ -94,7 +94,8 @@ describe "LinkTests" do
         :sql_code => "")
       user_access = FactoryGirl.create(:user_access, :action => 'store_manager_approve', :resource =>'exp_reinbersex_reinberses', :role_definition_id => @role.id, :rank => 1,
         :sql_code => "")
-    
+      user_access = FactoryGirl.create(:user_access, :action => 'create_exp_reinberse', :resource =>'commonx_logs', :role_definition_id => @role.id, :rank => 1,
+        :sql_code => "")
       
       visit '/'
       #save_and_open_page
@@ -106,6 +107,7 @@ describe "LinkTests" do
       visit reinberses_path
       save_and_open_page
       task = FactoryGirl.create(:exp_reinbersex_reinberse,:paid_by_id => nil, :requested_by_id => @u.id)
+      log = FactoryGirl.create(:commonx_log, :resource_name => 'exp_reinbersex_reinberses', :resource_id => task.id, :log => 'this is exp reinberse log')
       visit reinberses_path
       save_and_open_page
       page.should have_content('Reinbersements')
@@ -130,7 +132,8 @@ describe "LinkTests" do
       click_link task.id.to_s
       #save_and_open_page
       page.should have_content('Reinbersement Info')
-      
+      page.should have_content('this is exp reinberse log')
+      click_link 'New Log'
       #new
       visit new_reinberse_path()
       #save_and_open_page
